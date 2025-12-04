@@ -1,93 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Membird Mini App</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #0e0e0e;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-    .container {
-      padding-top: 60px;
-    }
-    h1 {
-      font-size: 28px;
-      margin-bottom: 10px;
-    }
-    p {
-      font-size: 16px;
-      opacity: 0.8;
-      margin-bottom: 40px;
-    }
-    button {
-      background: #3b82f6;
-      border: none;
-      padding: 16px 30px;
-      font-size: 18px;
-      border-radius: 12px;
-      color: white;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    button:hover {
-      background: #2563eb;
-    }
-    .log {
-      margin-top: 30px;
-      font-size: 14px;
-      opacity: 0.6;
-      white-space: pre-line;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Membird – Meme Flappy Bird</title>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <!-- Telegram Mini App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
-
 <body>
-  <div class="container">
-    <h1>🎮 Membird Mini App</h1>
-    <p>Нажми кнопку, чтобы протестировать показ рекламы</p>
 
-    <button onclick="showAd()">▶️ Показать рекламу</button>
+<div class="game-container">
+    <canvas id="gameCanvas"></canvas>
 
-    <div class="log" id="logBox"></div>
-  </div>
+    <div class="menu">
+        <h1>🐦 Membird</h1>
+        <p>Тапай, чтобы лететь. Мемы – чтобы побеждать.</p>
+        <button id="startBtn">Играть</button>
+        <button id="adBtn">Показать рекламу</button>
+    </div>
 
-  <script>
-    Telegram.WebApp.ready();
+    <div class="score-container" id="scoreBox">0</div>
+</div>
 
-    const logBox = document.getElementById("logBox");
-    function log(msg) {
-      console.log(msg);
-      logBox.textContent += msg + "\n";
-    }
-
-    // Telegram сообщает, что реклама доступна
-    Telegram.WebApp.onEvent('ad_available', () => {
-      log("🔔 Реклама доступна");
-    });
-
-    // Telegram сообщает, что рекламы нет
-    Telegram.WebApp.onEvent('ad_unavailable', () => {
-      log("⛔ Реклама временно недоступна");
-    });
-
-    // Показываем рекламу
-    function showAd() {
-      log("⏳ Запрос рекламы...");
-
-      Telegram.WebApp.showAd('reward', {}, (result) => {
-        log("📢 Результат показа: " + JSON.stringify(result));
-
-        if (result?.rewarded) {
-          log("🎁 Пользователь получил награду!");
-        }
-      });
-    }
-  </script>
+<script src="game.js"></script>
 </body>
 </html>
