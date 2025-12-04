@@ -36,7 +36,7 @@ let bestScore = 0;
 let coins = 0;
 
 const groundHeight = 90;
-const pipeGap = 150;
+const pipeGap = 260;
 const pipeWidth = 70;
 const pipeSpeedBase = 2.5;
 let pipeTimer = 0;
