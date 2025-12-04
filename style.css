@@ -4,102 +4,84 @@
 
 body {
   margin: 0;
-  padding: 0;
-  background: radial-gradient(circle at top, #1f2933, #020617);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
+  background: radial-gradient(circle at top, #111827, #020617);
   color: #fff;
 }
 
-.outer {
-  width: 100%;
+.app {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-}
-
-.card {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-  background: #050816;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-  overflow: hidden;
-}
-
-/* CANVAS */
-
-canvas {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: linear-gradient(#1e3a8a, #0f172a);
-}
-
-/* МЕНЮ / ОВЕРЛЕИ */
-
-.menu {
-  position: absolute;
-  inset: 0;
-  padding: 24px;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 10px 10px 16px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+
+/* HEADER */
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.98));
-  z-index: 3;
 }
 
-.menu.hidden {
-  display: none;
+.logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.menu h1 {
-  margin-bottom: 8px;
-  font-size: 28px;
+.logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  object-fit: cover;
 }
 
-.menu h2 {
-  margin-bottom: 8px;
-  font-size: 24px;
+.app-header h1 {
+  margin: 0;
+  font-size: 20px;
 }
 
-.menu p {
-  margin: 0 0 24px;
-  font-size: 15px;
-  opacity: 0.9;
+.app-header p {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.8;
 }
 
-/* КНОПКИ */
-
-button {
-  border: none;
-  border-radius: 10px;
-  padding: 12px 24px;
-  margin: 6px 0;
-  font-size: 17px;
-  font-weight: 600;
-  cursor: pointer;
-  background: #2563eb;
-  color: #fff;
-  width: 80%;
-  max-width: 260px;
-  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+.wallet {
+  font-size: 14px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.8);
 }
 
-button.secondary {
-  background: #334155;
+/* GAME CARD */
+
+.game-card {
+  position: relative;
+  flex: 1;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #020617;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
 }
 
-button:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+#gameCanvas {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-/* СЧЁТ И ЛОГ */
+/* HUD */
+
+.hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
 
 .score {
   position: absolute;
@@ -108,20 +90,92 @@ button:active {
   transform: translateX(-50%);
   font-size: 32px;
   font-weight: 700;
-  text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
-  z-index: 2;
-  display: none;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.7);
 }
 
-.log {
+/* OVERLAYS */
+
+.overlay {
   position: absolute;
-  bottom: 6px;
-  left: 10px;
-  right: 10px;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: radial-gradient(circle at top, rgba(15,23,42,0.96), rgba(15,23,42,0.98));
+  z-index: 5;
+}
+
+.overlay.visible {
+  display: flex;
+}
+
+.overlay-box {
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+}
+
+.overlay-box h2 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 24px;
+}
+
+.overlay-box p {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.hint {
+  margin-top: 8px;
   font-size: 11px;
-  opacity: 0.6;
-  z-index: 2;
-  pointer-events: none;
-  text-align: left;
-  white-space: pre-line;
+  opacity: 0.7;
+}
+
+/* BUTTONS */
+
+.btn {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.btn.primary {
+  background: #2563eb;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+.btn.accent {
+  background: #f59e0b;
+  color: #111827;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+}
+
+.btn.ghost {
+  background: rgba(30, 64, 175, 0.1);
+  color: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+}
+
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+  opacity: 0.9;
+}
+
+/* FOOTER */
+
+.app-footer {
+  font-size: 11px;
+  opacity: 0.55;
+  text-align: center;
 }
