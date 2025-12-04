@@ -2,36 +2,72 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <title>Membird – Meme Mini App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Membird – Meme Flappy</title>
 
   <link rel="stylesheet" href="style.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-  <div class="outer">
-    <div class="card">
-      <canvas id="gameCanvas"></canvas>
+  <div class="app">
+    <header class="app-header">
+      <div class="logo-wrap">
+        <img src="assets/logo.png" alt="logo" class="logo" onerror="this.style.display='none'">
+        <div>
+          <h1>Membird</h1>
+          <p>Мемный flappy для Telegram</p>
+        </div>
+      </div>
+      <div class="wallet">
+        <span id="coins">★ 0</span>
+      </div>
+    </header>
 
-      <!-- Главное меню -->
-      <div class="menu" id="mainMenu">
-        <h1>🐦 Membird</h1>
-        <p>Тапай, чтобы лететь. Удары об трубы – это уже мем.</p>
-        <button id="playBtn">Играть</button>
-        <button id="adBtn" class="secondary">Показать рекламу</button>
+    <main class="game-card">
+      <canvas id="gameCanvas" width="360" height="600"></canvas>
+
+      <!-- HUD со счётом -->
+      <div class="hud">
+        <div class="score" id="score">0</div>
       </div>
 
-      <!-- Оверлей Game Over -->
-      <div class="menu hidden" id="gameOver">
-        <h2>Игра окончена</h2>
-        <p>Счёт: <span id="finalScore">0</span><br />Рекорд: <span id="bestScore">0</span></p>
-        <button id="restartBtn">Играть снова</button>
+      <!-- Стартовый экран -->
+      <div id="startScreen" class="overlay visible">
+        <div class="overlay-box">
+          <h2>🐦 Membird</h2>
+          <p>Тапай по экрану, чтобы птица пролетела между мем-трубами.</p>
+
+          <button id="btnStart" class="btn primary">Играть</button>
+
+          <button id="btnRewardMenu" class="btn ghost">
+            Смотреть рекламу → получить монеты
+          </button>
+
+          <p class="hint">
+            Монеты пригодятся позже для скинов и бустов, когда запустим всю фабрику игр.
+          </p>
+        </div>
       </div>
 
-      <!-- Счёт во время игры -->
-      <div class="score" id="scoreBox">0</div>
-      <div class="log" id="logBox"></div>
-    </div>
+      <!-- Экран смерти -->
+      <div id="gameOverScreen" class="overlay">
+        <div class="overlay-box">
+          <h2>Игра окончена</h2>
+          <p>Счёт: <span id="finalScore">0</span></p>
+          <p>Рекорд: <span id="bestScore">0</span></p>
+
+          <button id="btnRestart" class="btn primary">Играть снова</button>
+
+          <button id="btnContinueAd" class="btn accent">
+            Продолжить за рекламу
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <span>GameFactory · prototype</span>
+    </footer>
   </div>
 
   <script src="game.js"></script>
