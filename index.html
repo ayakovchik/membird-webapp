@@ -2,18 +2,92 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>Membird</title>
+  <title>Membird Mini App</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0e0e0e;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+    .container {
+      padding-top: 60px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 16px;
+      opacity: 0.8;
+      margin-bottom: 40px;
+    }
+    button {
+      background: #3b82f6;
+      border: none;
+      padding: 16px 30px;
+      font-size: 18px;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    .log {
+      margin-top: 30px;
+      font-size: 14px;
+      opacity: 0.6;
+      white-space: pre-line;
+    }
+  </style>
 </head>
 
-<body style="font-family: Arial; background:#111; color:#fff; text-align:center; padding-top:50px;">
+<body>
+  <div class="container">
+    <h1>🎮 Membird Mini App</h1>
+    <p>Нажми кнопку, чтобы протестировать показ рекламы</p>
 
-  <h1>WebApp is working 🎮</h1>
-  <p>Монетизация и игра подключаются дальше</p>
+    <button onclick="showAd()">▶️ Показать рекламу</button>
+
+    <div class="log" id="logBox"></div>
+  </div>
 
   <script>
     Telegram.WebApp.ready();
-  </script>
 
+    const logBox = document.getElementById("logBox");
+    function log(msg) {
+      console.log(msg);
+      logBox.textContent += msg + "\n";
+    }
+
+    // Telegram сообщает, что реклама доступна
+    Telegram.WebApp.onEvent('ad_available', () => {
+      log("🔔 Реклама доступна");
+    });
+
+    // Telegram сообщает, что рекламы нет
+    Telegram.WebApp.onEvent('ad_unavailable', () => {
+      log("⛔ Реклама временно недоступна");
+    });
+
+    // Показываем рекламу
+    function showAd() {
+      log("⏳ Запрос рекламы...");
+
+      Telegram.WebApp.showAd('reward', {}, (result) => {
+        log("📢 Результат показа: " + JSON.stringify(result));
+
+        if (result?.rewarded) {
+          log("🎁 Пользователь получил награду!");
+        }
+      });
+    }
+  </script>
 </body>
 </html>
