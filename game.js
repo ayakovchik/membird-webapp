@@ -1,124 +1,245 @@
+// ИНИЦИАЛИЗАЦИЯ TELEGRAM
+const tg = window.Telegram ? window.Telegram.WebApp : null;
+if (tg) {
+  tg.ready();
+}
+
+// DOM
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
+const mainMenu = document.getElementById("mainMenu");
+const gameOverMenu = document.getElementById("gameOver");
+const playBtn = document.getElementById("playBtn");
+const restartBtn = document.getElementById("restartBtn");
+const adBtn = document.getElementById("adBtn");
+const scoreBox = document.getElementById("scoreBox");
+const finalScoreSpan = document.getElementById("finalScore");
+const bestScoreSpan = document.getElementById("bestScore");
+const logBox = document.getElementById("logBox");
+
+// РАЗМЕР CANVAS
 canvas.width = 360;
 canvas.height = 600;
 
-let bird = {
-    x: 60,
-    y: 200,
-    w: 40,
-    h: 40,
-    dy: 0
-};
-
-let pipes = [];
-let score = 0;
+// ИГРОВАЯ ЛОГИКА
+let bird;
+let pipes;
+let score;
+let bestScore = Number(localStorage.getItem("membird_best") || 0);
 let gameStarted = false;
 let gravity = 0.45;
 let jumpForce = -7;
-
-let memeBirdImg = new Image();
-memeBirdImg.src = "https://i.imgur.com/Tq4d6u7.png";  // мем-стиль птица Pepe/Doge mix
+let pipeSpeed = 2.8;
+let frameId = null;
 
 function resetGame() {
-    bird.y = 200;
-    bird.dy = 0;
-    pipes = [];
-    score = 0;
+  bird = {
+    x: 80,
+    y: canvas.height / 2,
+    w: 34,
+    h: 34,
+    dy: 0
+  };
+  pipes = [];
+  score = 0;
+  createPipe();
 }
 
 function createPipe() {
-    let gap = 150;
-    let topHeight = Math.random() * (canvas.height - gap - 100) + 40;
-    pipes.push({
-        x: canvas.width,
-        top: topHeight,
-        bottom: topHeight + gap
-    });
+  const gap = 150;
+  const topHeight = Math.random() * (canvas.height - gap - 130) + 40;
+  pipes.push({
+    x: canvas.width + 40,
+    top: topHeight,
+    bottom: topHeight + gap,
+    passed: false
+  });
+}
+
+function drawBackground() {
+  // небо
+  const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  grad.addColorStop(0, "#1d4ed8");
+  grad.addColorStop(1, "#0f172a");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // простые "облака"
+  ctx.fillStyle = "rgba(255,255,255,0.25)";
+  ctx.beginPath();
+  ctx.ellipse(80, 90, 40, 20, 0, 0, Math.PI * 2);
+  ctx.ellipse(120, 80, 30, 18, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.ellipse(260, 130, 50, 22, 0, 0, Math.PI * 2);
+  ctx.ellipse(300, 120, 34, 18, 0, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function drawBird() {
-    ctx.drawImage(memeBirdImg, bird.x, bird.y, bird.w, bird.h);
+  // тело
+  ctx.save();
+  ctx.translate(bird.x + bird.w / 2, bird.y + bird.h / 2);
+  ctx.rotate(Math.min(Math.max(bird.dy * 0.04, -0.6), 0.6));
+  ctx.translate(-bird.w / 2, -bird.h / 2);
+
+  ctx.fillStyle = "#fbbf24";
+  ctx.beginPath();
+  ctx.ellipse(bird.w / 2, bird.h / 2, bird.w / 2, bird.h / 2, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // крыло
+  ctx.fillStyle = "#f59e0b";
+  ctx.beginPath();
+  ctx.ellipse(bird.w / 2, bird.h / 2 + 4, 10, 7, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // клюв
+  ctx.fillStyle = "#f97316";
+  ctx.beginPath();
+  ctx.moveTo(bird.w / 2 + 10, bird.h / 2);
+  ctx.lineTo(bird.w / 2 + 20, bird.h / 2 - 3);
+  ctx.lineTo(bird.w / 2 + 20, bird.h / 2 + 3);
+  ctx.closePath();
+  ctx.fill();
+
+  // очки (мем)
+  ctx.fillStyle = "#111827";
+  ctx.fillRect(bird.w / 2 - 12, bird.h / 2 - 8, 10, 8);
+  ctx.fillRect(bird.w / 2 + 2, bird.h / 2 - 8, 10, 8);
+  ctx.fillRect(bird.w / 2 - 2, bird.h / 2 - 6, 4, 2);
+
+  ctx.restore();
 }
 
 function drawPipes() {
-    ctx.fillStyle = "#44aa44";
-    pipes.forEach(p => {
-        ctx.fillRect(p.x, 0, 60, p.top);
-        ctx.fillRect(p.x, p.bottom, 60, canvas.height - p.bottom);
-    });
+  ctx.fillStyle = "#16a34a";
+  pipes.forEach((p) => {
+    // верхняя труба
+    ctx.fillRect(p.x, 0, 60, p.top);
+    // нижняя труба
+    ctx.fillRect(p.x, p.bottom, 60, canvas.height - p.bottom);
+  });
 }
 
-function update() {
-    if (!gameStarted) return;
+function updateScoreUI() {
+  scoreBox.textContent = score;
+}
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function gameLoop() {
+  frameId = requestAnimationFrame(gameLoop);
 
-    bird.dy += gravity;
-    bird.y += bird.dy;
+  bird.dy += gravity;
+  bird.y += bird.dy;
 
-    pipes.forEach(p => {
-        p.x -= 3;
+  // фон
+  drawBackground();
 
-        if (bird.x < p.x + 60 &&
-            bird.x + bird.w > p.x &&
-            (bird.y < p.top || bird.y + bird.h > p.bottom)) {
-            gameOver();
-        }
+  // трубы
+  pipes.forEach((p) => {
+    p.x -= pipeSpeed;
 
-        if (p.x + 60 < bird.x && !p.passed) {
-            score++;
-            p.passed = true;
-        }
-    });
-
-    pipes = pipes.filter(p => p.x > -60);
-
-    if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
-        createPipe();
+    // столкновения
+    if (
+      bird.x < p.x + 60 &&
+      bird.x + bird.w > p.x &&
+      (bird.y < p.top || bird.y + bird.h > p.bottom)
+    ) {
+      return endGame();
     }
 
-    drawPipes();
-    drawBird();
-    updateScore();
+    // зачисляем очко
+    if (!p.passed && p.x + 60 < bird.x) {
+      p.passed = true;
+      score++;
+    }
+  });
 
-    requestAnimationFrame(update);
+  // удаляем старые трубы
+  pipes = pipes.filter((p) => p.x > -70);
+
+  // добавляем новую
+  if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+    createPipe();
+  }
+
+  // границы экрана
+  if (bird.y + bird.h > canvas.height || bird.y < 0) {
+    return endGame();
+  }
+
+  drawPipes();
+  drawBird();
+  updateScoreUI();
 }
 
-function updateScore() {
-    document.getElementById("scoreBox").innerText = score;
+function startGame() {
+  mainMenu.classList.add("hidden");
+  gameOverMenu.classList.add("hidden");
+  scoreBox.style.display = "block";
+  resetGame();
+  gameStarted = true;
+  if (frameId) cancelAnimationFrame(frameId);
+  gameLoop();
 }
 
-function gameOver() {
-    gameStarted = false;
-    alert("Игра окончена! Ваш счёт: " + score);
-    resetGame();
-    document.querySelector(".menu").style.display = "block";
-    document.getElementById("scoreBox").style.display = "none";
+function endGame() {
+  if (!gameStarted) return;
+  gameStarted = false;
+  if (frameId) cancelAnimationFrame(frameId);
+
+  finalScoreSpan.textContent = score;
+  if (score > bestScore) {
+    bestScore = score;
+    localStorage.setItem("membird_best", String(bestScore));
+  }
+  bestScoreSpan.textContent = bestScore;
+
+  scoreBox.style.display = "none";
+  gameOverMenu.classList.remove("hidden");
 }
 
-canvas.addEventListener("click", () => {
-    if (gameStarted) bird.dy = jumpForce;
+// УПРАВЛЕНИЕ
+
+function flap() {
+  if (!gameStarted) return;
+  bird.dy = jumpForce;
+}
+
+canvas.addEventListener("click", flap);
+canvas.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+  flap();
 });
 
-// кнопка "Играть"
-document.getElementById("startBtn").onclick = () => {
-    document.querySelector(".menu").style.display = "none";
-    document.getElementById("scoreBox").style.display = "block";
-    gameStarted = true;
-    resetGame();
-    update();
-};
+playBtn.addEventListener("click", startGame);
+restartBtn.addEventListener("click", startGame);
 
-// реклама
-document.getElementById("adBtn").onclick = async () => {
-    const tg = window.Telegram.WebApp;
-    if (tg && tg.showAd) {
-        try {
-            await tg.showAd("reward");
-        } catch (e) {
-            alert("Реклама недоступна");
-        }
-    }
-};
+// ЛОГ ДЛЯ РЕКЛАМЫ
+
+function log(msg) {
+  console.log(msg);
+  if (!logBox) return;
+  logBox.textContent = msg;
+}
+
+// Кнопка рекламы
+adBtn.addEventListener("click", () => {
+  if (!(tg && typeof tg.showAd === "function")) {
+    log("Реклама пока не поддерживается в этом клиенте Telegram");
+    return;
+  }
+
+  log("Запрос рекламы...");
+  tg.showAd("reward", {}, (res) => {
+    log("Результат: " + JSON.stringify(res || {}));
+  });
+});
+
+// события Telegram о доступности рекламы
+if (tg && typeof tg.onEvent === "function") {
+  tg.onEvent("ad_available", () => log("Реклама доступна"));
+  tg.onEvent("ad_unavailable", () => log("Реклама недоступна"));
+}

@@ -1,53 +1,127 @@
-body {
-    margin: 0;
-    padding: 0;
-    background: #111;
-    color: #fff;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+* {
+  box-sizing: border-box;
 }
 
-.game-container {
-    position: relative;
-    width: 100%;
-    max-width: 420px;
+body {
+  margin: 0;
+  padding: 0;
+  background: radial-gradient(circle at top, #1f2933, #020617);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
+  color: #fff;
 }
+
+.outer {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: #050816;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+}
+
+/* CANVAS */
 
 canvas {
-    width: 100%;
-    height: auto;
-    background: #222;
-    border-radius: 10px;
+  display: block;
+  width: 100%;
+  height: auto;
+  background: linear-gradient(#1e3a8a, #0f172a);
 }
+
+/* МЕНЮ / ОВЕРЛЕИ */
 
 .menu {
-    position: absolute;
-    top: 25%;
-    width: 100%;
-    text-align: center;
+  position: absolute;
+  inset: 0;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.98));
+  z-index: 3;
 }
+
+.menu.hidden {
+  display: none;
+}
+
+.menu h1 {
+  margin-bottom: 8px;
+  font-size: 28px;
+}
+
+.menu h2 {
+  margin-bottom: 8px;
+  font-size: 24px;
+}
+
+.menu p {
+  margin: 0 0 24px;
+  font-size: 15px;
+  opacity: 0.9;
+}
+
+/* КНОПКИ */
 
 button {
-    display: block;
-    margin: 12px auto;
-    padding: 14px 22px;
-    font-size: 18px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    background: #2a7afe;
-    color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  margin: 6px 0;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #2563eb;
+  color: #fff;
+  width: 80%;
+  max-width: 260px;
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
 }
 
-.score-container {
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 32px;
-    font-weight: bold;
-    display: none;
+button.secondary {
+  background: #334155;
+}
+
+button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* СЧЁТ И ЛОГ */
+
+.score {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 32px;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+  z-index: 2;
+  display: none;
+}
+
+.log {
+  position: absolute;
+  bottom: 6px;
+  left: 10px;
+  right: 10px;
+  font-size: 11px;
+  opacity: 0.6;
+  z-index: 2;
+  pointer-events: none;
+  text-align: left;
+  white-space: pre-line;
 }
