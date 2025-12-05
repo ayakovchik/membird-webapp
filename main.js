@@ -276,13 +276,18 @@ function onGameOver() {
   updateUIText();
 }
 
+// <<< ВАЖНОЕ МЕСТО — используем надписи из конфига >>>
 function updateUIText() {
   const uiText = config.UI_TEXT || {};
-  const tapText = uiText.tap_to_start || 'Тапни, чтобы начать';
-  const gameOverText = uiText.game_over || 'Игра окончена';
+  const tapText      = uiText.tap_to_start || 'Тапни, чтобы начать';
+  const gameOverText = uiText.game_over     || 'Игра окончена';
+  const scoreLabel   = uiText.score_label   || 'Счёт';
+  const bestLabel    = uiText.best_label    || 'Лучший';
 
-  scoreLabelEl.textContent = `${score}`;
-  bestLabelEl.textContent = `Лучший: ${bestScore}`;
+  // теперь слева будет, например, "Отказы: 3"
+  scoreLabelEl.textContent = `${scoreLabel}: ${score}`;
+  // справа — "Рекорд: 5"
+  bestLabelEl.textContent  = `${bestLabel}: ${bestScore}`;
 
   retryButtonEl.classList.add('hidden');
   continueButtonEl.classList.add('hidden');
@@ -295,11 +300,13 @@ function updateUIText() {
     messageEl.textContent = gameOverText;
     retryButtonEl.classList.remove('hidden');
 
-    if (config.MONETIZATION && (config.MONETIZATION.rewarded_ads || config.MONETIZATION.stars_continue)) {
+    if (config.MONETIZATION &&
+        (config.MONETIZATION.rewarded_ads || config.MONETIZATION.stars_continue)) {
       continueButtonEl.classList.remove('hidden');
     }
   }
 }
+// <<< КОНЕЦ БЛОКА С UI-ТЕКСТОМ >>>
 
 function draw() {
   if (!ctx || !config) return;
