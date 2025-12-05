@@ -1,6 +1,6 @@
 {
   "GAME_ID": "template_flappy_001",
-  "GAME_TITLE": "Template Flappy Meme",
+  "GAME_TITLE": "Не пустили на катамаран",
   "GENRE": "flappy",
 
   "SPEED": 4.0,
@@ -15,11 +15,11 @@
   "PIPE_BOTTOM_IMAGE": "assets/pipe-bottom.png",
 
   "UI_TEXT": {
-    "tap_to_start": "Тапни по экрану, чтобы взлететь",
-    "score_label": "Счёт",
+    "tap_to_start": "Тапай по экрану, чтобы птица пролетела между мем-трубами.",
+    "score_label": "Отказы",
     "best_label": "Рекорд",
-    "game_over": "Игра окончена",
-    "retry": "Играть ещё",
+    "game_over": "Тебя снова не пустили!",
+    "retry": "Еще попытка",
     "continue": "Продолжить за рекламу / Stars"
   },
 
