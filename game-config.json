@@ -1,0 +1,31 @@
+{
+  "GAME_ID": "template_flappy_001",
+  "GAME_TITLE": "Template Flappy Meme",
+  "GENRE": "flappy",
+
+  "SPEED": 4.0,
+  "GAP_SIZE": 240,
+  "GRAVITY": 0.35,
+  "JUMP_FORCE": 7.5,
+
+  "BG_IMAGE": "assets/bg.png",
+  "GROUND_IMAGE": "assets/ground.png",
+  "BIRD_IMAGE": "assets/bird.png",
+  "PIPE_TOP_IMAGE": "assets/pipe-top.png",
+  "PIPE_BOTTOM_IMAGE": "assets/pipe-bottom.png",
+
+  "UI_TEXT": {
+    "tap_to_start": "Тапни по экрану, чтобы взлететь",
+    "score_label": "Счёт",
+    "best_label": "Рекорд",
+    "game_over": "Игра окончена",
+    "retry": "Играть ещё",
+    "continue": "Продолжить за рекламу / Stars"
+  },
+
+  "MONETIZATION": {
+    "rewarded_ads": true,
+    "stars_continue": true,
+    "stars_price_continue": 3
+  }
+}
